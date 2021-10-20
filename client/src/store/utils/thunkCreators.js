@@ -83,7 +83,7 @@ const saveMessage = async (body) => {
   return data;
 };
 
-const sendMessage = (data, body) => {
+const sendMessage = async (data, body) => {
   socket.emit("new-message", {
     message: data.message,
     recipientId: body.recipientId,
@@ -93,9 +93,9 @@ const sendMessage = (data, body) => {
 
 // message format to send: {recipientId, text, conversationId}
 // conversationId will be set to null if its a brand new conversation
-export const postMessage = (body) => (dispatch) => {
+export const postMessage = (body) => async (dispatch) => {
   try {
-    const data = saveMessage(body);
+    const data = await saveMessage(body);
 
     if (!body.conversationId) {
       dispatch(addConversation(body.recipientId, data.message));
@@ -103,7 +103,7 @@ export const postMessage = (body) => (dispatch) => {
       dispatch(setNewMessage(data.message));
     }
 
-    sendMessage(data, body);
+    await sendMessage(data, body);
   } catch (error) {
     console.error(error);
   }
