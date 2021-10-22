@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box } from "@material-ui/core";
 import { SenderBubble, OtherUserBubble } from "../ActiveChat";
 import  moment  from "moment";
 
 const Messages = (props) => {
   const { messages, otherUser, userId } = props;
+  const [sortedMessagesByCreatedAt, setSortedMessagesByCreatedAt] = useState(messages.sort((a, b) => moment(a.createdAt) - moment(b.createdAt)));
   
-  const sortedMessagesByCreatedAt = messages.slice().sort((a, b) => moment(a.createdAt) - moment(b.createdAt));
+  useEffect (() => {
+    setSortedMessagesByCreatedAt(messages.sort((a, b) => moment(a.createdAt) - moment(b.createdAt)));      
+  },[messages]);  
+  
 
   return (
     <Box>
