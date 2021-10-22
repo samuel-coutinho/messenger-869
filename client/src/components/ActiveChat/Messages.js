@@ -4,17 +4,11 @@ import { SenderBubble, OtherUserBubble } from "../ActiveChat";
 import  moment  from "moment";
 
 const Messages = (props) => {
-  const { messages, otherUser, userId } = props;
-  const [sortedMessagesByCreatedAt, setSortedMessagesByCreatedAt] = useState(messages.sort((a, b) => moment(a.createdAt) - moment(b.createdAt)));
-  
-  useEffect (() => {
-    setSortedMessagesByCreatedAt(messages.sort((a, b) => moment(a.createdAt) - moment(b.createdAt)));      
-  },[messages]);  
-  
+  const { messages, otherUser, userId } = props;  
 
   return (
     <Box>
-      { sortedMessagesByCreatedAt.map((message) => {
+      { messages.map((message) => {
         const time = moment(message.createdAt).format('MMM Do YY, h:mm:ss a');
 
         return message.senderId === userId ? (
