@@ -35,6 +35,7 @@ class Conversations(APIView):
             conversations_response = []
 
             for convo in conversations:
+
                 convo_dict = {
                     "id": convo.id,
                     "messages": [
@@ -43,6 +44,9 @@ class Conversations(APIView):
                         for message in convo.messages.all()
                     ],
                 }
+
+                unread_messages = convo.messages.filter(wasRead=False).count()
+                convo_dict["unreadMessages"] = unread_messages,
 
                 # set properties for notification count and latest message preview
                 convo_dict["latestMessageText"] = convo_dict["messages"][-1]["text"]
@@ -71,3 +75,18 @@ class Conversations(APIView):
             )
         except Exception as e:
             return HttpResponse(status=500)
+
+    def post(self, request):
+
+        senderId = request.data.get("user1Id")
+        recipientId = request.data.get("user2Id")
+
+        conversation = Conversation.find_conversation(senderId, recipientId)
+
+        recipient_unread_messages = Message.objects.filter(conversation=conversation, wasRead=False).exclude(senderId=senderId)
+
+        for unread_message in recipient_unread_messages:
+            unread_message.wasRead = True
+            unread_message.save()
+
+        return JsonResponse("OK", safe=False)
