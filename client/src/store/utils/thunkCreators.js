@@ -5,6 +5,7 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
+  setUnreadMessages,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 
@@ -72,6 +73,7 @@ export const logout = (id) => async (dispatch) => {
 export const fetchConversations = () => async (dispatch) => {
   try {
     const { data } = await axios.get("/api/conversations");
+
     dispatch(gotConversations(data));
   } catch (error) {
     console.error(error);
@@ -80,6 +82,11 @@ export const fetchConversations = () => async (dispatch) => {
 
 const saveMessage = async (body) => {
   const { data } = await axios.post("/api/messages", body);
+  return data;
+};
+
+const saveConversationRead = async (body) => {
+  const { data } = await axios.post("/api/conversations", body);
   return data;
 };
 
@@ -104,6 +111,27 @@ export const postMessage = (body) => async (dispatch) => {
     }
 
     sendMessage(data, body);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const postConversationRead = (body) => async (dispatch) => {
+  try {
+    const data = await saveConversationRead(body);
+
+    // console.log("data.unread_messages");
+    // console.log(data.unread_messages);
+
+    // console.log("body.recipientId");
+    // console.log(body.recipientId);
+
+    // console.log("body.conversationId");
+    // console.log(body.conversationId);
+
+    // dispatch(setUnreadMessages(data.unread_messages, body.conversationId));
+    // dispatch(gotConversations());
+    // await fetchConversations();
   } catch (error) {
     console.error(error);
   }

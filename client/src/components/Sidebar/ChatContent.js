@@ -19,12 +19,10 @@ const useStyles = makeStyles((theme) => ({
     letterSpacing: -0.17,
   },
   unreadmessages: {
-  //  padding: 0,
-  //  verticalAlign: "middle",
-    right: "3vw",
-//  top: "1vw",
+    //position: "relative",
+    //  right: "3vw",
+    margin: "auto",
     fontSize: 12,
-
   },
 }));
 
@@ -44,11 +42,16 @@ const ChatContent = (props) => {
           {latestMessageText}
         </Typography>
       </Box>
-      { conversation.unreadMessages > 0 && 
-        <Box alignItems="center">
-          <Badge badgeContent={conversation.unreadMessages} max={99} color="primary" className={classes.unreadmessages} />
+      {conversation.unreadMessages > 0 && (
+        <Box className={classes.root}>
+          <Badge
+            badgeContent={conversation.unreadMessages}
+            max={99}
+            color="primary"
+            className={classes.unreadmessages}
+          />
         </Box>
-      }
+      )}
     </Box>
   );
 };

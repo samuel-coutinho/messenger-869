@@ -3,6 +3,10 @@ import { Box } from "@material-ui/core";
 import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { makeStyles } from "@material-ui/core/styles";
 import { setActiveChat } from "../../store/activeConversation";
+import {
+  postConversationRead,
+  fetchConversations,
+} from "../../store/utils/thunkCreators";
 import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
@@ -14,17 +18,24 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     "&:hover": {
-      cursor: "grab"
-    }
-  }
+      cursor: "grab",
+    },
+  },
 }));
 
 const Chat = (props) => {
   const classes = useStyles();
-  const { conversation } = props;
+  const { conversation, user } = props;
   const { otherUser } = conversation;
 
   const handleClick = async (conversation) => {
+    const reqBody = {
+      senderId: user.id,
+      recipientId: otherUser.id,
+      conversationId: conversation.id,
+    };
+    await props.postConversationRead(reqBody);
+    await props.fetchConversations();
     await props.setActiveChat(conversation.otherUser.username);
   };
 
@@ -45,7 +56,13 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setActiveChat: (id) => {
       dispatch(setActiveChat(id));
-    }
+    },
+    postConversationRead: (data) => {
+      dispatch(postConversationRead(data));
+    },
+    fetchConversations: () => {
+      dispatch(fetchConversations());
+    },
   };
 };
 
