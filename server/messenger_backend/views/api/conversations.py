@@ -9,7 +9,7 @@ from rest_framework.request import Request
 
 
 class Conversations(APIView):
-    """get all conversations for a user, include latest message text for preview, and all messages
+    """get all conversations for a user, include latest message text for preview, the number of unread messages and all messages
     include other user model so we have info on username/profile pic (don't include current user info)
     TODO: for scalability, implement lazy loading"""
 
@@ -36,18 +36,17 @@ class Conversations(APIView):
 
             for convo in conversations:
 
-                unread_messages = convo.messages.filter(wasRead=False).exclude(senderId=user_id).count()           
+                num_unread_messages = convo.messages.filter(wasRead=False).exclude(senderId=user_id).count()           
 
                 convo_dict = {
                     "id": convo.id,
-                    "unreadMessages": unread_messages,
+                    "numUnreadMessages": num_unread_messages,
                     "messages": [
                         message.to_dict(
                             ["id", "text", "senderId", "createdAt"])
                         for message in convo.messages.all()
                     ],
-                }               
-              
+                }
 
                 # set properties for notification count and latest message preview
                 convo_dict["latestMessageText"] = convo_dict["messages"][-1]["text"]
@@ -79,17 +78,18 @@ class Conversations(APIView):
 
     def post(self, request):
 
-        userId = request.data.get("senderId")
-        recipientId = request.data.get("recipientId")      
+        try:
+            senderId = request.data.get("senderId")
+            recipientId = request.data.get("recipientId")      
 
-        conversation = Conversation.find_conversation(userId, recipientId)       
+            conversation = Conversation.find_conversation(senderId, recipientId)   
 
-        recipient_unread_messages = Message.objects.filter(conversation=conversation, wasRead=False).exclude(senderId=userId)      
-        
-        for unread_message in recipient_unread_messages:          
-            unread_message.wasRead = True
-            unread_message.save()     
+            recipient_unread_messages = Message.objects.filter(conversation=conversation, wasRead=False).exclude(senderId=senderId)      
+            
+            for unread_message in recipient_unread_messages:          
+                unread_message.wasRead = True
+                unread_message.save() 
 
-        unread_messages = conversation.messages.filter(wasRead=False).exclude(senderId=userId).count()
-
-        return JsonResponse({"unread_messages": unread_messages})
+            return HttpResponse(status=200)
+        except Exception as e:
+            return HttpResponse(status=500)

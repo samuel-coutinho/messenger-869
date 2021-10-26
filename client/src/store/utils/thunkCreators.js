@@ -5,7 +5,7 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
-  setUnreadMessages,
+  setConversationRead,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 
@@ -85,11 +85,6 @@ const saveMessage = async (body) => {
   return data;
 };
 
-const saveConversationRead = async (body) => {
-  const { data } = await axios.post("/api/conversations", body);
-  return data;
-};
-
 const sendMessage = (data, body) => {
   socket.emit("new-message", {
     message: data.message,
@@ -118,20 +113,9 @@ export const postMessage = (body) => async (dispatch) => {
 
 export const postConversationRead = (body) => async (dispatch) => {
   try {
-    const data = await saveConversationRead(body);
+    await axios.post("/api/conversations", body);
 
-    // console.log("data.unread_messages");
-    // console.log(data.unread_messages);
-
-    // console.log("body.recipientId");
-    // console.log(body.recipientId);
-
-    // console.log("body.conversationId");
-    // console.log(body.conversationId);
-
-    // dispatch(setUnreadMessages(data.unread_messages, body.conversationId));
-    // dispatch(gotConversations());
-    // await fetchConversations();
+    dispatch(setConversationRead(body.recipientId));
   } catch (error) {
     console.error(error);
   }

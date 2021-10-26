@@ -81,27 +81,14 @@ export const addNewConvoToStore = (state, recipientId, message) => {
   });
 };
 
-// export const updateUnreadMessagesToStore = (
-//   state,
-//   unreadMessages,
-//   conversationId
-// ) => {
-//   // const convoCopy = { ...state };
-
-//   // convoCopy.forEach((convo) => {
-//   //   if (convo.otherUser.id === recipientId) {
-//   //     console.log("convo.unreadMessages");
-//   //     console.log(convo.unreadMessages);
-//   //     convo.unreadMessages = unreadMessages;
-//   //   }
-//   // });
-//   const newState = [...state];
-
-//   newState.forEach((convo) => {
-//     if (convo.id === conversationId) {
-//       convo.unreadMessages = unreadMessages;
-//     }
-//   });
-
-//   return newState;
-// };
+export const setConversationReadToStare = (state, senderId) => {
+  return state.map((convo) => {
+    if (convo.otherUser.id === senderId) {
+      const convoCopy = { ...convo };
+      convoCopy.numUnreadMessages = 0;
+      return convoCopy;
+    } else {
+      return convo;
+    }
+  });
+};
