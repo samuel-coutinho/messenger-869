@@ -4,7 +4,7 @@ import {
   addSearchedUsersToStore,
   removeOfflineUserFromStore,
   addMessageToStore,
-  setConversationReadToStare,
+  setConversationReadToStore,
 } from "./utils/reducerFunctions";
 
 // ACTIONS
@@ -101,7 +101,7 @@ const reducer = (state = [], action) => {
         action.payload.newMessage
       );
     case SET_CONVERSATION_READ:
-      return setConversationReadToStare(state, action.senderId);
+      return setConversationReadToStore(state, action.senderId);
 
     default:
       return state;
