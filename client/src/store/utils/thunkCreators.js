@@ -113,7 +113,7 @@ export const postMessage = (body) => async (dispatch) => {
 
 export const postConversationRead = (body) => async (dispatch) => {
   try {
-    await axios.post("/api/conversations", body);
+    await axios.patch("/api/conversations/read", body);
 
     dispatch(setConversationRead(body.recipientId));
   } catch (error) {

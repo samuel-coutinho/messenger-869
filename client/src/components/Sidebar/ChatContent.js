@@ -18,9 +18,11 @@ const useStyles = makeStyles((theme) => ({
     color: "#9CADC8",
     letterSpacing: -0.17,
   },
-  numUnreadmessages: {
-    margin: "auto",
-    fontSize: 12,
+  previewTextBold: {
+    fontWeight: "bold",
+    fontSize: 14,
+    color: "#000000",
+    letterSpacing: -0.17,
   },
 }));
 
@@ -36,19 +38,23 @@ const ChatContent = (props) => {
         <Typography className={classes.username}>
           {otherUser.username}
         </Typography>
-        <Typography className={classes.previewText}>
+        <Typography
+          className={
+            numUnreadMessages > 0
+              ? classes.previewTextBold
+              : classes.previewText
+          }
+        >
           {latestMessageText}
         </Typography>
       </Box>
       {numUnreadMessages > 0 && (
-        <Box className={classes.root}>
-          <Badge
-            badgeContent={numUnreadMessages}
-            max={99}
-            color="primary"
-            className={classes.numUnreadmessages}
-          />
-        </Box>
+        <Badge
+          badgeContent={numUnreadMessages}
+          max={99}
+          color="primary"
+          className={classes.numUnreadmessages}
+        />
       )}
     </Box>
   );
