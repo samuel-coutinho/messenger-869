@@ -5,6 +5,7 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
+  setConversationRead,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 
@@ -72,6 +73,7 @@ export const logout = (id) => async (dispatch) => {
 export const fetchConversations = () => async (dispatch) => {
   try {
     const { data } = await axios.get("/api/conversations");
+
     dispatch(gotConversations(data));
   } catch (error) {
     console.error(error);
@@ -104,6 +106,16 @@ export const postMessage = (body) => async (dispatch) => {
     }
 
     sendMessage(data, body);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const postConversationRead = (body) => async (dispatch) => {
+  try {
+    await axios.patch("/api/conversations/read", body);
+
+    dispatch(setConversationRead(body.recipientId));
   } catch (error) {
     console.error(error);
   }
