@@ -3,8 +3,9 @@ import store from "./store";
 import {
   setNewMessage,
   removeOfflineUser,
-  addOnlineUser,
+  addOnlineUser,  
 } from "./store/conversations";
+import { fetchConversations } from "./store/utils/thunkCreators"
 
 const socket = io(window.location.origin);
 
@@ -18,9 +19,10 @@ socket.on("connect", () => {
   socket.on("remove-offline-user", (id) => {
     store.dispatch(removeOfflineUser(id));
   });
-  socket.on("new-message", (data) => {
-    store.dispatch(setNewMessage(data.message, data.sender));
-  });
+  socket.on("new-message", (data) => {   
+    store.dispatch(setNewMessage(data.message, data.sender));   
+    store.dispatch(fetchConversations());
+  }); 
 });
 
 export default socket;
